@@ -7,7 +7,7 @@ steps:
     image: mcr.microsoft.com/dotnet/sdk:8.0
     commands:
       - apt-get update && apt-get install -y zip
-      - dotnet build . -r Release
+      - dotnet build . -c Release
       - zip -r build.zip AppleMusicRPC/bin/Release/net8.0-windows10.0.22000.0 
 
 
