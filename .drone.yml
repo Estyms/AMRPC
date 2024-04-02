@@ -3,20 +3,30 @@ type: docker
 name: build
 
 steps:
-  - name: Build dotnet image
+  - name: Build .Net image
     image: mcr.microsoft.com/dotnet/sdk:8.0
     commands:
       - apt-get update && apt-get install -y zip
       - dotnet build . -c Release
-      - zip -r build.zip AppleMusicRPC/bin/Release/net8.0-windows10.0.22000.0 
+      - LOC=$(pwd)
+      - cd AppleMusicRPC/bin/Release/net8.0-windows10.0.22000.0/win-x64
+      - zip -r $LOC/build.zip ./*
 
 
-  - name: gitea_release
+  - name: Rename release files
+    image: alpine
+    commands:
+      - mv build.zip release-$DRONE_TAG.zip
+    when:
+      event: tag
+
+
+  - name: Push release to Forgejo
     image: plugins/gitea-release
     settings:
       api_key: 
         from_secret: RELEASE_KEY
       base_url: https://forgejo.regnault.dev
-      files: build.zip
+      files: release-*.zip
     when:
       event: tag
