@@ -1,0 +1,20 @@
+kind: pipeline
+type: docker
+name: build
+
+steps:
+  - name: Build dotnet image
+    image: mcr.microsoft.com/dotnet/sdk:8.0
+    commands:
+      - apt-get update && apt-get install -y zip
+      - dotnet build . -r Release
+      - zip -r build.zip AppleMusicRPC/bin/Release/net8.0-windows10.0.22000.0 
+
+
+  - name: gitea_release
+    image: plugins/gitea-release
+    settings:
+    api_key: 
+      from_secret: RELEASE_KEY
+    base_url: https://forgejo.regnault.dev
+    files: build.zip
