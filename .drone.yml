@@ -14,7 +14,9 @@ steps:
   - name: gitea_release
     image: plugins/gitea-release
     settings:
-    api_key: 
-      from_secret: RELEASE_KEY
-    base_url: https://forgejo.regnault.dev
-    files: build.zip
+      api_key: 
+        from_secret: RELEASE_KEY
+      base_url: https://forgejo.regnault.dev
+      files: build.zip
+    when:
+      event: tag
